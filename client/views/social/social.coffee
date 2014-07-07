@@ -2,14 +2,24 @@
 Template.entrySocial.helpers
 
   buttonText: ->
-    Session.get('buttonText')
+    buttonText = Session.get('buttonText')
+    if buttonText == 'up'
+      t9n 'signUp'
+    else
+      t9n 'signIn'
 
   unconfigured: ->
-    Accounts.loginServiceConfiguration.find({service: @toString()}).fetch().length is 0
+    ServiceConfiguration.configurations.find({service: @toString()}).fetch().length is 0
 
   google: ->
     if @[0] == 'g' && @[1] == 'o'
       true
+
+  icon: ->
+    switch @.toString()
+      when 'google' then 'google-plus'
+      when 'meteor-developer' then 'rocket'
+      else @
 
 Template.entrySocial.events
 
@@ -29,7 +39,10 @@ Template.entrySocial.events
         Accounts._loginButtonsSession.configureService(serviceName)
       else
         Accounts._loginButtonsSession.errorMessage(err.reason || t9n("error.unknown"))
-    loginWithService = Meteor["loginWith" + capitalize(serviceName)]
+    if serviceName is 'meteor'
+      loginWithService = Meteor["loginWithMeteorDeveloperAccount"]
+    else
+      loginWithService = Meteor["loginWith" + capitalize(serviceName)]
     options = {}
 
     if (Accounts.ui._options.requestPermissions[serviceName])

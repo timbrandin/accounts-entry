@@ -1,5 +1,5 @@
 Template.entryForgotPassword.helpers
-  error: -> Session.get('entryError')
+  error: -> t9n(Session.get('entryError'))
 
   logo: ->
     AccountsEntry.settings.logo
@@ -7,7 +7,7 @@ Template.entryForgotPassword.helpers
 Template.entryForgotPassword.events
   'submit #forgotPassword': (event) ->
     event.preventDefault()
-    Session.set('email', $('input[type="email"]').val())
+    Session.set('email', $('input[name="forgottenEmail"]').val())
 
     if Session.get('email').length is 0
       Session.set('entryError', 'Email is required')

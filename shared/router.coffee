@@ -5,7 +5,11 @@ Router.map ->
     onBeforeAction: ->
       Session.set('entryError', undefined)
       Session.set('buttonText', 'in')
+      Session.set('fromWhere', Router.current().path)
     onRun: ->
+      if Meteor.userId()
+        Router.go AccountsEntry.settings.dashboardRoute
+
       if AccountsEntry.settings.signInTemplate
         @template = AccountsEntry.settings.signInTemplate
 
@@ -59,12 +63,12 @@ Router.map ->
 
   @route 'entrySignOut',
     path: '/sign-out'
-    onBeforeAction: ->
+    onBeforeAction: (pause)->
       Session.set('entryError', undefined)
       if AccountsEntry.settings.homeRoute
         Meteor.logout () ->
           Router.go AccountsEntry.settings.homeRoute
-      @pause()
+      pause()
 
   @route 'entryResetPassword',
     path: 'reset-password/:resetToken'
